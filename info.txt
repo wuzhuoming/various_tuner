@@ -1,0 +1,60 @@
+HyperOpt:
+	Support optimization alog:
+		Random Search
+		Tree of Parzen Estimators (TPE)
+		Adaptive TPE
+	BOHB support:
+		NO
+	successive halving algo:
+		NO
+	paper:
+		http://proceedings.mlr.press/v28/bergstra13.pdf
+	NNI mention:
+		NO
+
+
+Optuna:
+	Support optimization alog:
+		Grid Search
+		Random Search
+		TPE
+		CmaEs Search : A search strategy using CMA-ES algorithm.
+	BOHB support:
+		NO
+	successive halving algo:
+		YES
+			two Pruner:
+				optuna.pruners.SuccessiveHalvingPruner
+				optuna.pruners.HyperbandPruner
+	Resume support:
+		YES
+		Optuna create a object name "study" to control the whole optimization process, this object can specify the storage dir of optimization process infomations, then if stop the optimization process, it can be resume from that dir. It is not like the ckpt we using to shorten the trial time, it is more like load previous optimization information to continue the optimization process.
+	paper:
+		https://arxiv.org/pdf/1907.10902.pdf
+	NNI mention:
+		NO
+
+Ray tune:
+	Support optimization alog:
+		AxSearch : Bayesian/Bandit Optimization
+		DragonflySearch : Scalable Bayesian Optimization
+		SkoptSearch : Bayesian Optimization
+		HyperOptSearch : Tree-Parzen Estimators
+		BayesOptSearch : Bayesian Optimization
+		TuneBOHB : Bayesian Opt/HyperBand
+		NevergradSearch : Gradient-free Optimization
+		OptunaSearch : Optuna search algorithms
+		ZOOptSearch : Zeroth-order Optimization
+		SigOptSearch : Closed source
+	BOHB support:
+		YES
+	successive halving algo:
+		YES
+	Resume support:
+		YES
+		Same as Optuna, load optimization infomation on previous run. 
+		example link : https://docs.ray.io/en/master/tune/api_docs/suggestion.html#saving-and-restoring
+	paper:
+		https://arxiv.org/pdf/1807.05118.pdf
+	NNI mention:
+		NO
