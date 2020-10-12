@@ -5,9 +5,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import torch.optim as optim
+## hyperopt
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 
-
+## hyperopt search space def
 space = {
     'lr': hp.choice('lr', [0.1,0.01,0.001,0.0001,0.00001]),
 }
@@ -98,8 +99,10 @@ def model_train(params):
 	print('Accuracy of the network on the 10000 test images: %d %%' % (
 	    100 * correct / total))
 	acc = correct / total
+	## hyperopt
 	return {'loss':-acc,'status':STATUS_OK}
 
+## hyperopt start tuning
 trials = Trials()
 best = fmin(model_train, space, algo=tpe.suggest, max_evals=10, trials=trials)
 print(best)
