@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import torch.optim as optim
+## optuna import 
 import optuna
 
 
@@ -51,6 +52,7 @@ classes = ('plane', 'car', 'bird', 'cat',
 
 
 def model_train(trial):
+	## optuna def search space
 	lr = trial.suggest_categorical('lr', [0.1,0.01,0.001,0.0001,0.00001])
 	##model def
 	net = Net()
@@ -95,8 +97,9 @@ def model_train(trial):
 	print('Accuracy of the network on the 10000 test images: %d %%' % (
 	    100 * correct / total))
 	acc = correct / total
+	#optuna return
 	return -acc
-
+## optuna start tuning
 study = optuna.create_study()
 study.optimize(model_train, n_trials=5)
 
