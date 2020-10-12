@@ -1,8 +1,9 @@
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
+## hyperopt import
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 
-
+##hyper opt def search space 
 space = {
     'optimizer': hp.choice('optimizer', ['adam', 'rmsprop']),
 }
@@ -29,8 +30,9 @@ def model_train(params):
 	history = model.fit(train_images, train_labels, epochs=5, 
                     validation_data=(test_images, test_labels))
 	test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
+	# hyperopt return
 	return {'loss':-test_acc,'status':STATUS_OK}
-
+## hyperopt start tuning
 trials = Trials()
 best = fmin(model_train, space, algo=tpe.suggest, max_evals=10, trials=trials)
 print(best)
