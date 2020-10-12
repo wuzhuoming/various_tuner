@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
-from ray import tune
+import optuna
 
 
 (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
@@ -17,31 +17,17 @@ model.add(layers.Dense(64, activation='relu'))
 model.add(layers.Dense(10))
 
 
-def model_train(config):
-	# optimizer = trial.suggest_categorical('optimizer', ['adam', 'rmsprop'])
-	model.compile(optimizer=config['optimizer'],
+def model_train(trial):
+    op = trial.suggest_categorical('op', [0.1,0.01,0.001,0.0001,0.00001])
+    model.compile(optimizer=op,
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
-	history = model.fit(train_images, train_labels, epochs=5, 
+    history = model.fit(train_images, train_labels, epochs=5, 
                     validation_data=(test_images, test_labels))
-	test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
-	tune.report(mean_loss= -test_acc)
+    test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
+    return -test_acc
 
-config={
-        'optimizer': tune.choice(['adam', 'rmsprop'])
-    }
-
-analysis = tune.run(
-    model_train,
-    config=config,
-    num_samples=5,
-    stop={"training_iteration": 5},
-    local_dir="./results", 
-    name="test_experiment"
-    )
-
-print("Best config: ", analysis.get_best_config(metric="mean_loss", mode="min"))
-
-# Get a dataframe for analyzing trial results.
-df = analysis.results_df
-print(df)
+study = optuna.create_study()
+study.optimize(model_train, n_trials=5)
+print(study.best_params)
+print(study.best_value)
