@@ -7,6 +7,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 
+## tune import
 import ray
 from ray import tune
 from ray.tune.schedulers import AsyncHyperBandScheduler
@@ -98,6 +99,7 @@ def train_mnist(config):
         train(model, optimizer, train_loader, device)
         acc = test(model, test_loader, device)
         # Set this to run Tune.
+        ## tune report result, like nni.report()
         tune.report(mean_accuracy=acc)
 
 
@@ -121,7 +123,7 @@ if __name__ == "__main__":
 
     # for early stopping
     sched = AsyncHyperBandScheduler()
-
+    ## tune config and search space def.
     analysis = tune.run(
         train_mnist,
         metric="mean_accuracy",
