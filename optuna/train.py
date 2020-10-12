@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
+#optuna import
 import optuna
 
 
@@ -18,6 +19,7 @@ model.add(layers.Dense(10))
 
 
 def model_train(trial):
+    #optuna def search space
     op = trial.suggest_categorical('op', [0.1,0.01,0.001,0.0001,0.00001])
     model.compile(optimizer=op,
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
@@ -25,8 +27,9 @@ def model_train(trial):
     history = model.fit(train_images, train_labels, epochs=5, 
                     validation_data=(test_images, test_labels))
     test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
+    #optuna return
     return -test_acc
-
+#optuna start tuning
 study = optuna.create_study()
 study.optimize(model_train, n_trials=5)
 print(study.best_params)
