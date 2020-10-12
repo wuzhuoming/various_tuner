@@ -1,7 +1,7 @@
 import argparse
 import numpy as np
 from tensorflow.keras.datasets import mnist
-
+## tune import
 from ray.tune.integration.keras import TuneReportCallback
 
 parser = argparse.ArgumentParser()
@@ -39,6 +39,7 @@ def train_mnist(config):
         epochs=epochs,
         verbose=0,
         validation_data=(x_test, y_test),
+        ## tune call back, to report the result, like nni.report()
         callbacks=[TuneReportCallback({
             "mean_accuracy": "accuracy"
         })])
@@ -49,7 +50,8 @@ if __name__ == "__main__":
     from ray import tune
     from ray.tune.schedulers import AsyncHyperBandScheduler
     mnist.load_data()  # we do this on the driver because it's not threadsafe
-
+    
+    ##tune spec and start tuning 
     ray.init(num_cpus=4 if args.smoke_test else None)
     sched = AsyncHyperBandScheduler(
         time_attr="training_iteration",
@@ -70,6 +72,7 @@ if __name__ == "__main__":
             "cpu": 0,
             "gpu": 1
         },
+        ## search space def
         config={
             "threads": 1,
             "lr": tune.sample_from(lambda spec: np.random.uniform(0.001, 0.1)),
